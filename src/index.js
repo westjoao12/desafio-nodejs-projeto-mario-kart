@@ -36,6 +36,24 @@ async function getRandomBlock(){
     return result
 }
 
+async function getRandomConfront(){
+    let random = Math.floor(Math.random() * 2) + 1;
+    let result;
+    
+    switch (true) {
+        case random <= 1:
+            result = "CASCO"
+            break;
+        case random > 1:
+            result = "BOMBA"
+            break;
+    
+        default:
+            result = "CASCO"
+    }
+    return result;
+}
+
 async function logRollResult(CharacterName, block, diceResult, attribute){
     console.log(
         `${CharacterName} 🎲 rolou um dado de ${block} ${diceResult} + ${attribute} = ${
@@ -115,14 +133,20 @@ async function playRaceEngine(character1, character2){
                 character2.PODER
             );
 
+            //sortear o confronto
+            let confront = await getRandomConfront();
+            console.log(`O confronto foi ${confront}!`);
+            
+            let pointLost = confront == "CASCO" ? 1 : 2;//se o confronto foi casco, perde 1 ponto, se foi outro, perde 2
+
             if(powerResult1 > powerResult2 && character2.PONTOS > 0){
-                console.log(`${character1.NOME} venceu o confronto! ${character2.NOME} perdeu 1 ponto 🐢`);
-                character2.PONTOS --;
+                console.log(`${character1.NOME} venceu o confronto! ${character2.NOME} perdeu ${pointLost} ponto 🐢`);
+                character2.PONTOS -= pointLost;
             }
 
             if(powerResult2 > powerResult1 && character1.PONTOS > 0){
-                console.log(`${character2.NOME} venceu o confronto! ${character1.NOME} perdeu 1 ponto 🐢`);
-                character1.PONTOS --;
+                console.log(`${character2.NOME} venceu o confronto! ${character1.NOME} perdeu ${pointLost} ponto 🐢`);
+                character1.PONTOS -= pointLost;
             }
 
             console.log(powerResult1 == powerResult2 ? "Confronto empatado! Nenhum ponto foi perdido" : "");
